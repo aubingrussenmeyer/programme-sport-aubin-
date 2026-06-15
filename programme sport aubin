@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MASSE — Programme Haut du Corps</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+--bg: #0a0a0a;
+--surface: #111111;
+--card: #161616;
+--border: #242424;
+--red: #e63329;
+--red-dim: rgba(230,51,41,0.12);
+--red-border: rgba(230,51,41,0.25);
+--orange: #f07a2a;
+--yellow: #f0c12a;
+--text: #e0e0e0;
+--muted: #666;
+--white: #fff;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+background: var(--bg);
+color: var(--text);
+font-family: 'Inter', sans-serif;
+line-height: 1.55;
+}
+
+.hero {
+padding: 0;
+overflow: hidden;
+position: relative;
+border-bottom: 3px solid var(--red);
+}
+
+.hero-inner {
+max-width: 960px;
+margin: 0 auto;
+padding: 56px 28px 48px;
+}
+
+.hero-kicker {
+font-family: 'Barlow Condensed', sans-serif;
+font-size: 13px;
+font-weight: 700;
+letter-spacing: 0.22em;
+text-transform: uppercase;
+color: var(--red);
+margin-bottom: 14px;
+display: flex;
+align-items: center;
+gap: 10px;
+}
+
+.hero-kicker::before {
+content: '';
+display: inline-block;
+width: 28px;
+height: 2px;
+background: var(--red);
+}
+
+.hero h1 {
+font-family: 'Barlow Condensed', sans-serif;
+font-size: clamp(4rem, 12vw, 8.5rem);
+font-weight: 900;
+line-height: 0.88;
+text-transform: uppercase;
+color: var(--white);
+letter-spacing: -0.01em;
+}
+
+.hero h1 span {
+color: var(--red);
+display: block;
+}
+
+.hero-stats {
+display: flex;
+flex-wrap: wrap;
+gap: 0;
+margin-top: 32px;
+border: 1px solid var(--border);
+border-radius: 4px;
+overflow: hidden;
+max-width: 620px;
+}
+
+.hstat {
+flex: 1;
+min-width: 120px;
+padding: 14px 18px;
+border-right: 1px solid var(--border);
+}
+
+.hstat:last-child { border-right: none; }
+
+.hstat-val {
+font-family: 'Barlow Condensed', sans-serif;
+font-size: 1.8rem;
+font-weight: 800;
+color: var(--red);
+line-height: 1;
+}
+
+.hstat-label {
+font-size: 10px;
+font-weight: 600;
+letter-spacing: 0.1em;
+text-transform: uppercase;
+color: var(--muted);
+margin-top: 3px;
+}
+
+.wrap {
+max-width: 960px;
+margin: 0 auto;
+padding: 0 28px;
+}
+
+.sec-head {
+display: flex;
+align-items: center;
+gap: 12px;
+padding: 40px 0 20px;
+}
+
+.sec-head h2 {
+font-family: 'Barlow Condensed', sans-serif;
+font-size: 11px;
+font-weight: 800;
+letter-spacing: 0.2em;
+text-transform: uppercase;
+color: var(--red);
+}
+
+.sec-head::after {
+content: '';
+flex: 1;
+height: 1px;
+background: var(--border);
+}
+
+.week-grid {
+display: grid;
+grid-template-columns: repeat(7, 1fr);
+gap: 4px;
+margin-bottom: 44px;
+}
+
+.wday {
+background: var(--card);
+border: 1px solid var(--border);
+padding: 12px 6px;
+text-align: center;
+border-radius: 3px;
+}
+
+.wday.active-day { border-color: var(--red); }
+.wday.rest-day { opacity: 0.4; }
+
+.wday-name {
+font-size: 9px;
+font-weight: 700;
+letter-spacing: 0.14em;
+text-transform: uppercase;
+color: var(--muted);
+margin-bottom: 6px;
+}
+
+.wday-focus {
+font-family: 'Barlow Condensed', sans-serif;
+font-size: 13px;
+font-weight: 700;
+text-transform: uppercase;
+line-height: 1.2;
+}
+
+.wday-focus.c-red { color: var(--red); }
+.wday-focus.c-orange { color: var(--orange); }
+.wday-focus.c-yellow { color: var(--yellow); }
+.wday-focus.c-muted { color: var(--muted); font-weight: 400; font-style: italic; font-family: 'Inter', sans-serif; font-size: 11px; }
+
+.tabs {
+display: flex;
+gap: 2px;
+margin-bottom: 20px;
+overflow-x: auto;
+scrollbar-width: none;
+-webkit-overflow-scrolling: touch;
+}
+
+.tabs::-webkit-scrollbar { display: none; }
+
+.tab-btn {
+flex-shrink: 0;
+padding: 12px 20px;
+background: var(--surface);
+border: 1px solid var(--border);
+border-radius: 2px;
+color: var(--muted);
+font-family: 'Barlow Condensed', sans-serif;
+font-size: 14px;
+font-weight: 700;
+letter-spacing: 0.08em;
+text-transform: uppercase;
+cursor: pointer;
+transition: all 0.15s;
+white-space: nowrap;
+min-height: 44px;
+touch-action: manipulation;
+-webkit-user-select: none;
+user-select: none;
+}
+
+.tab-btn:hover { color: var(--text); border-color: #444; }
+
+.tab-btn.active {
+background: var(--red);
+border-color: var(--red);
+color: #fff;
+}
+
+.tab-btn.rest-tab.active {
+background: var(--surface);
+border-color: var(--border);
+color: var(--muted);
+}
+
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+.day-card {
+background: var(--card);
+border: 1px solid var(--border);
+border-radius: 4px;
+overflow: hidden;
+}
+
+.day-hdr {
+padding: 22px 24px 18px;
+border-bottom: 1px solid var(--border);
+background: var(--surface);
+display: flex;
+justify-content: space-between;
+align-items: flex-start;
+flex-wrap: wrap;
+gap: 12px;
+}
+
+.day-hdr-left .day-num {
+font-family: 'Barlow Condensed', sans-serif;
+font-size: 11px;
+font-weight: 700;
+letter-spacing: 0.2em;
+text-transform: uppercase;
+color: var(--red);
+}
+
+.day-hdr-left .day-name {
+font-family: 'Barlow Condensed', sans-serif;
+font-size: 2rem;
+font-weight: 900;
+text-transform: uppercase;
+color: var(--white);
+line-height: 1;
+margin-top: 2px;
+}
+
+.badges {
+display: flex;
+gap: 6px;
+flex-wrap: wrap;
+align-items: flex-start;
+}
+
+.badge {
+padding: 4px 10px;
+border-radius: 2px;
+font-size: 10px;
+font-weight: 700;
+letter-spacing: 0.08em;
+text-transform: uppercase;
+}
+
+.badge-red { background: var(--red-dim); color: var(--red); border: 1px solid var(--red-border); }
+.badge-orange { background: rgba(240,122,42,0.12); color: var(--orange); border: 1px solid rgba(240,122,42,0.25); }
+.badge-yellow { background: rgba(240,193,42,0.12); color: var(--yellow); border: 1px solid rgba(240,193,42,0.25); }
+.badge-gray { background: rgba(102,102,102,0.12); color: var(--muted); border: 1px solid rgba(102,102,102,0.2); }
+
+.warmup {
+padding: 13px 24px;
+border-bottom: 1px solid var(--border);
+font-size: 13px;
+color: var(--muted);
+background: rgba(230,51,41,0.04);
+}
+
+.warmup strong { color: var(--red); }
+
+.ex-table {
+width: 100%;
+border-collapse: collapse;
+}
+
+.ex-table thead tr {
+background: rgba(0,0,0,0.3);
+}
+
+.ex-table th {
+padding: 9px 16px;
+text-align: left;
+font-size: 9px;
+font-weight: 700;
+letter-spacing: 0.15em;
+text-transform: uppercase;
+color: var(--muted);
+border-bottom: 1px solid var(--border);
+}
+
+.ex-table td {
+padding: 14px 16px;
+border-bottom: 1px solid rgba(36,36,36,0.7);
+vertical-align: middle;
+font-size: 14px;
+}
+
+.ex-table tr:last-child td { border-bottom: none; }
+.ex-table tr:hover td { background: rgba(255,255,255,0.015); }
+
+.ex-name {
+font-weight: 600;
+color: var(--white);
+display: block;
+font-size: 14px;
+}
+
+.ex-tip {
+font-size: 11px;
+color: var(--muted);
+margin-top: 3px;
+display: block;
+line-height: 1.5;
+}
+
+.muscle-tag {
+display: inline-block;
+padding: 3px 8px;
+border-radius: 2px;
+font-size: 10px;
+font-weight: 700;
+letter-spacing: 0.06em;
+text-transform: uppercase;
+white-space: nowrap;
+}
+
+.m-chest { background: rgba(230,51,41,0.15); color: var(--red); }
+.m-back { background: rgba(240,122,42,0.15); color: var(--orange); }
+.m-shoulders { background: rgba(240,193,42,0.15); color: var(--yellow); }
+.m-biceps { background: rgba(110,200,240,0.15); color: #6ec8f0; }
+.m-triceps { background: rgba(200,240,110,0.12); color: #c8f06e; }
+.m-traps { background: rgba(180,110,240,0.15); color: #c87ef0; }
+.m-core { background: rgba(102,102,102,0.15); color: var(--muted); }
+
+.sr {
+font-family: 'Barlow Condensed', sans-serif;
+font-size: 18px;
+font-weight: 800;
+color: var(--white);
+white-space: nowrap;
+letter-spacing: 0.02em;
+}
+
+.rest-t {
+font-size: 11px;
+color: var(--muted);
+}
+
+.cooldown {
+padding: 13px 24px;
+border-top: 1px solid var(--border);
+font-size: 13px;
+color: var(--muted);
+background: rgba(240,122,42,0.04);
+}
+
+.cooldown strong { color: var(--orange); }
+
+.rest-card {
+background: var(--card);
+border: 1px solid var(--border);
+border-radius: 4px;
+padding: 48px 32px;
+text-align: center;
+}
+
+.rest-card .ri { font-size: 2.5rem; margin-bottom: 14px; }
+
+.rest-card h3 {
+font-family: 'Barlow Condensed', sans-serif;
+font-size: 1.8rem;
+font-weight: 900;
+text-transform: uppercase;
+color: var(--muted);
+margin-bottom: 10px;
+}
+
+.rest-card p {
+font-size: 14px;
+color: var(--muted);
+max-width: 380px;
+margin: 0 auto;
+}
+
+.macro-row {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+gap: 8px;
+margin-bottom: 24px;
+}
+
+.macro-box {
+background: var(--card);
+border: 1px solid var(--border);
+border-radius: 3px;
+padding: 18px 20px;
+}
+
+.macro-box-label {
+font-size: 9px;
+font-weight: 700;
+letter-spacing: 0.18em;
+text-transform: uppercase;
+color: var(--muted);
+margin-bottom: 6px;
+}
+
+.macro-box-val {
+font-family: 'Barlow Condensed', sans-serif;
+font-size: 2.4rem;
+font-weight: 900;
+line-height: 1;
+}
+
+.macro-box-note {
+font-size: 11px;
+color: var(--muted);
+margin-top: 5px;
+line-height: 1.5;
+}
+
+.meals {
+display: flex;
+flex-direction: column;
+gap: 6px;
+margin-bottom: 32px;
+}
+
+.meal {
+background: var(--card);
+border: 1px solid var(--border);
+border-radius: 3px;
+padding: 15px 20px;
+display: flex;
+gap: 20px;
+align-items: flex-start;
+}
+
+.meal-t {
+font-family: 'Barlow Condensed', sans-serif;
+font-size: 13px;
+font-weight: 800;
+letter-spacing: 0.1em;
+text-transform: uppercase;
+color: var(--red);
+min-width: 80px;
+padding-top: 1px;
+}
+
+.meal-body strong {
+display: block;
+font-size: 13px;
+font-weight: 600;
+color: var(--white);
+margin-bottom: 2px;
+}
+
+.meal-body span {
+font-size: 12px;
+color: var(--muted);
+line-height: 1.6;
+}
+
+.keys-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+gap: 8px;
+margin-bottom: 48px;
+}
+
+.key-card {
+background: var(--card);
+border: 1px solid var(--border);
+border-radius: 3px;
+padding: 18px;
+display: flex;
+gap: 14px;
+align-items: flex-start;
+}
+
+.key-icon {
+font-size: 1.3rem;
+flex-shrink: 0;
+margin-top: 1px;
+}
+
+.key-card strong {
+display: block;
+font-family: 'Barlow Condensed', sans-serif;
+font-size: 15px;
+font-weight: 800;
+text-transform: uppercase;
+letter-spacing: 0.04em;
+color: var(--white);
+margin-bottom: 4px;
+}
+
+.key-card p {
+font-size: 12px;
+color: var(--muted);
+line-height: 1.6;
+}
+
+.important-box {
+background: var(--red-dim);
+border: 1px solid var(--red-border);
+border-left: 3px solid var(--red);
+border-radius: 3px;
+padding: 16px 20px;
+margin-bottom: 20px;
+font-size: 13px;
+color: var(--text);
+line-height: 1.6;
+}
+
+.important-box strong { color: var(--red); }
+
+.divider { height: 1px; background: var(--border); margin-bottom: 0; }
+
+.footer {
+text-align: center;
+padding: 32px 28px 48px;
+font-size: 11px;
+color: #333;
+letter-spacing: 0.08em;
+text-transform: uppercase;
+}
+
+@media (max-width: 600px) {
+.week-grid { grid-template-columns: repeat(4, 1fr); }
+.ex-table th:nth-child(4), .ex-table td:nth-child(4) { display: none; }
+.day-hdr { flex-direction: column; }
+.hero h1 { font-size: 3.8rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="hero-kicker">Programme prise de masse · Haut du corps</div>
+<h1>Build<br><span>du muscle.</span></h1>
+<div class="hero-stats">
+<div class="hstat"><div class="hstat-val">63<span style="font-size:1rem;color:var(--muted)"> kg</span></div><div class="hstat-label">Poids actuel</div></div>
+<div class="hstat"><div class="hstat-val">1m80</div><div class="hstat-label">Taille</div></div>
+<div class="hstat"><div class="hstat-val">5</div><div class="hstat-label">Jours / semaine</div></div>
+<div class="hstat"><div class="hstat-val">3000<span style="font-size:1rem;color:var(--muted)"> kcal</span></div><div class="hstat-label">Cible calorique</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+<div class="sec-head"><h2>Semaine type</h2></div>
+<div class="week-grid">
+<div class="wday active-day"><div class="wday-name">Lun</div><div class="wday-focus c-red">Poitrine<br>Triceps</div></div>
+<div class="wday active-day"><div class="wday-name">Mar</div><div class="wday-focus c-orange">Dos<br>Biceps</div></div>
+<div class="wday rest-day"><div class="wday-name">Mer</div><div class="wday-focus c-muted">Repos</div></div>
+<div class="wday active-day"><div class="wday-name">Jeu</div><div class="wday-focus c-yellow">Épaules<br>Trapèzes</div></div>
+<div class="wday active-day"><div class="wday-name">Ven</div><div class="wday-focus c-red">Bras<br>Focus</div></div>
+<div class="wday active-day"><div class="wday-name">Sam</div><div class="wday-focus c-orange">Full<br>Upper</div></div>
+<div class="wday rest-day"><div class="wday-name">Dim</div><div class="wday-focus c-muted">Repos</div></div>
+</div>
+
+<div class="important-box">
+<strong>Important pour toi :</strong> À 63 kg pour 1m80, tu es en morphologie ectomorphe — métabolisme rapide, difficile de prendre du poids. Les règles sont différentes : <strong>moins de cardio</strong> (brûle trop de calories), <strong>repos obligatoire</strong> (le muscle pousse pendant la récup), et <strong>manger BEAUCOUP</strong> est aussi important que s'entraîner. Sans surplus calorique, le programme ne servira à rien.
+</div>
+
+<div class="sec-head"><h2>Programme détaillé</h2></div>
+
+<div class="tabs" id="tabNav">
+<button class="tab-btn active" data-day="lundi">Lundi — Poitrine</button>
+<button class="tab-btn" data-day="mardi">Mardi — Dos</button>
+<button class="tab-btn rest-tab" data-day="mercredi">Mer 😴</button>
+<button class="tab-btn" data-day="jeudi">Jeudi — Épaules</button>
+<button class="tab-btn" data-day="vendredi">Vendredi — Bras</button>
+<button class="tab-btn" data-day="samedi">Samedi — Full</button>
+<button class="tab-btn rest-tab" data-day="dimanche">Dim 😴</button>
+</div>
+
+<!-- LUNDI -->
+<div id="tab-lundi" class="tab-content active">
+<div class="day-card">
+<div class="day-hdr">
+<div class="day-hdr-left"><div class="day-num">Lundi · Séance 1</div><div class="day-name">Poitrine + Triceps</div></div>
+<div class="badges"><span class="badge badge-red">~55 min</span><span class="badge badge-orange">Pectoraux focus</span><span class="badge badge-gray">Barre + Haltères</span></div>
+</div>
+<div class="warmup"><strong>🔥 Échauffement (8 min) :</strong> 5 min vélo léger + 2 séries pompes légères 15 reps + rotations épaules + bras croisés 10 reps</div>
+<table class="ex-table">
+<thead><tr><th>Exercice</th><th>Muscles</th><th>Séries × Reps</th><th>Repos</th></tr></thead>
+<tbody>
+<tr><td><span class="ex-name">Développé couché barre 🏆</span><span class="ex-tip">L'exercice roi. Descendre la barre jusqu'à effleurer la poitrine, pousser en explosant. Progression de charge chaque semaine.</span></td><td><span class="muscle-tag m-chest">Pectoraux</span></td><td class="sr">5 × 6–8</td><td class="rest-t">2–3 min</td></tr>
+<tr><td><span class="ex-name">Développé incliné haltères</span><span class="ex-tip">Banc à 30–45°, travaille le haut des pecs. Contrôle la descente en 2 secondes.</span></td><td><span class="muscle-tag m-chest">Pectoraux haut</span></td><td class="sr">4 × 8–10</td><td class="rest-t">90 s</td></tr>
+<tr><td><span class="ex-name">Écarté haltères sur banc plat</span><span class="ex-tip">Grand arc de cercle, coudes légèrement fléchis — étirement max en bas, squeeze en haut.</span></td><td><span class="muscle-tag m-chest">Pectoraux</span></td><td class="sr">3 × 12</td><td class="rest-t">75 s</td></tr>
+<tr><td><span class="ex-name">Dips prise large (lest si possible)</span><span class="ex-tip">Prise large + buste penché en avant = pectoraux. Si trop facile : mettre un haltère entre les pieds.</span></td><td><span class="muscle-tag m-chest">Pecs + Triceps</span></td><td class="sr">4 × 10–12</td><td class="rest-t">90 s</td></tr>
+<tr><td><span class="ex-name">Extension triceps poulie haute</span><span class="ex-tip">Coudes fixes contre le corps, descendre jusqu'à l'extension complète — triceps long.</span></td><td><span class="muscle-tag m-triceps">Triceps</span></td><td class="sr">4 × 12–15</td><td class="rest-t">60 s</td></tr>
+<tr><td><span class="ex-name">Développé couché prise serrée</span><span class="ex-tip">Mains rapprochées (30 cm d'écart), mêmes mouvements que le DC normal — triceps en feu.</span></td><td><span class="muscle-tag m-triceps">Triceps</span></td><td class="sr">3 × 10</td><td class="rest-t">75 s</td></tr>
+</tbody>
+</table>
+<div class="cooldown"><strong>🧊 Cooldown (5 min) :</strong> Étirement pectoraux (bras en croix contre un mur), étirement triceps derrière la tête, rotations cervicales</div>
+</div>
+</div>
+
+<!-- MARDI -->
+<div id="tab-mardi" class="tab-content">
+<div class="day-card">
+<div class="day-hdr">
+<div class="day-hdr-left"><div class="day-num">Mardi · Séance 2</div><div class="day-name">Dos + Biceps</div></div>
+<div class="badges"><span class="badge badge-red">~55 min</span><span class="badge badge-orange">Largeur du dos</span><span class="badge badge-gray">Barre + Poulie</span></div>
+</div>
+<div class="warmup"><strong>🔥 Échauffement (8 min) :</strong> Rotations d'épaules, face pulls légers, 2 séries de tractions (ou tirage) à vide + étirement latissimus</div>
+<table class="ex-table">
+<thead><tr><th>Exercice</th><th>Muscles</th><th>Séries × Reps</th><th>Repos</th></tr></thead>
+<tbody>
+<tr><td><span class="ex-name">Tractions prise large 🏆</span><span class="ex-tip">L'exercice qui donne le V du dos. Mouvement complet : bras tendus en bas, menton au-dessus de la barre. Si trop dur : tirage poulie haute prise large.</span></td><td><span class="muscle-tag m-back">Dos (latissimus)</span></td><td class="sr">5 × max</td><td class="rest-t">2–3 min</td></tr>
+<tr><td><span class="ex-name">Rowing barre buste penché</span><span class="ex-tip">Dos à 45°, tirer vers le bas-ventre, coudes le long du corps — épaisseur du dos.</span></td><td><span class="muscle-tag m-back">Dos moyen</span></td><td class="sr">4 × 8–10</td><td class="rest-t">2 min</td></tr>
+<tr><td><span class="ex-name">Tirage poulie basse (machine dos)</span><span class="ex-tip">Assis, tirer vers le ventre, sortir la poitrine, squeeze en fin de mouvement — garder le dos droit.</span></td><td><span class="muscle-tag m-back">Dos + Biceps</span></td><td class="sr">4 × 10–12</td><td class="rest-t">90 s</td></tr>
+<tr><td><span class="ex-name">Rowing haltère 1 bras (sur banc)</span><span class="ex-tip">1 genou sur le banc, tirer haut vers la hanche, coude au plafond — pleine amplitude.</span></td><td><span class="muscle-tag m-back">Grand dorsal</span></td><td class="sr">3 × 12/côté</td><td class="rest-t">75 s</td></tr>
+<tr><td><span class="ex-name">Curl barre EZ (biceps)</span><span class="ex-tip">Coudes fixes, pas de balancement — montée explosive, descente contrôlée 2 secondes.</span></td><td><span class="muscle-tag m-biceps">Biceps</span></td><td class="sr">4 × 10</td><td class="rest-t">75 s</td></tr>
+<tr><td><span class="ex-name">Curl haltères marteau</span><span class="ex-tip">Prise neutre (pouces vers le haut) — travaille le brachial et l'avant-bras. Épaisseur du bras.</span></td><td><span class="muscle-tag m-biceps">Biceps + Brachial</span></td><td class="sr">3 × 12</td><td class="rest-t">60 s</td></tr>
+</tbody>
+</table>
+<div class="cooldown"><strong>🧊 Cooldown (5 min) :</strong> Étirement grand dorsal (accroché à une barre), étirement biceps bras tendu contre mur, décompression lombaire enfant</div>
+</div>
+</div>
+
+<!-- MERCREDI REPOS -->
+<div id="tab-mercredi" class="tab-content">
+<div class="rest-card">
+<div class="ri">😴</div>
+<h3>Mercredi — Repos</h3>
+<p>Le muscle ne pousse pas en salle, il pousse pendant le repos. Journée off totale ou marche légère max 30 min. Mange bien quand même — le corps reconstruit toujours.</p>
+</div>
+</div>
+
+<!-- JEUDI -->
+<div id="tab-jeudi" class="tab-content">
+<div class="day-card">
+<div class="day-hdr">
+<div class="day-hdr-left"><div class="day-num">Jeudi · Séance 3</div><div class="day-name">Épaules + Trapèzes</div></div>
+<div class="badges"><span class="badge badge-red">~50 min</span><span class="badge badge-yellow">Largeur silhouette</span><span class="badge badge-gray">Haltères + Barre</span></div>
+</div>
+<div class="warmup"><strong>🔥 Échauffement (8 min) :</strong> Face pulls légers × 20, cercles d'épaules, rotations externes avec haltères légers × 15, étirements pectoraux</div>
+<table class="ex-table">
+<thead><tr><th>Exercice</th><th>Muscles</th><th>Séries × Reps</th><th>Repos</th></tr></thead>
+<tbody>
+<tr><td><span class="ex-name">Développé militaire barre debout 🏆</span><span class="ex-tip">Le squat du haut du corps. Barre sur les clavicules, pousser en ligne droite au-dessus de la tête. Fessiers contractés, gainage actif.</span></td><td><span class="muscle-tag m-shoulders">Deltoïdes</span></td><td class="sr">5 × 6–8</td><td class="rest-t">2–3 min</td></tr>
+<tr><td><span class="ex-name">Élévations latérales haltères</span><span class="ex-tip">Bras légèrement fléchis, monter jusqu'à l'horizontal — cibles les deltoïdes médians. C'est ça qui donne la largeur des épaules.</span></td><td><span class="muscle-tag m-shoulders">Deltoïdes médians</span></td><td class="sr">4 × 15</td><td class="rest-t">60 s</td></tr>
+<tr><td><span class="ex-name">Oiseau haltères (reverse fly)</span><span class="ex-tip">Buste penché à 90°, bras tendus sur les côtés — arrière de l'épaule (deltoïde post.) souvent négligé.</span></td><td><span class="muscle-tag m-shoulders">Deltoïdes post.</span></td><td class="sr">4 × 12–15</td><td class="rest-t">60 s</td></tr>
+<tr><td><span class="ex-name">Face pull à la poulie</span><span class="ex-tip">Poulie haute, tirer vers le visage en écartant les coudes — protège les épaules + développe l'arrière du deltoïde.</span></td><td><span class="muscle-tag m-shoulders">Épaules + Coiffe</span></td><td class="sr">4 × 15</td><td class="rest-t">60 s</td></tr>
+<tr><td><span class="ex-name">Shrugs haltères (haussements d'épaules)</span><span class="ex-tip">Monter les épaules vers les oreilles, tenir 1 sec en haut, descendre lentement. Ne pas rouler les épaules.</span></td><td><span class="muscle-tag m-traps">Trapèzes</span></td><td class="sr">4 × 15</td><td class="rest-t">60 s</td></tr>
+<tr><td><span class="ex-name">Développé Arnold haltères</span><span class="ex-tip">Commencer paumes vers soi (biceps), rotation externe pendant le push — sollicite les 3 faisceaux du deltoïde.</span></td><td><span class="muscle-tag m-shoulders">Deltoïdes complets</span></td><td class="sr">3 × 10</td><td class="rest-t">75 s</td></tr>
+</tbody>
+</table>
+<div class="cooldown"><strong>🧊 Cooldown (5 min) :</strong> Étirement épaules (bras en croix contre la poitrine), pendulum léger, rotations cervicales, décompression trapèzes</div>
+</div>
+</div>
+
+<!-- VENDREDI -->
+<div id="tab-vendredi" class="tab-content">
+<div class="day-card">
+<div class="day-hdr">
+<div class="day-hdr-left"><div class="day-num">Vendredi · Séance 4</div><div class="day-name">Bras — Biceps & Triceps</div></div>
+<div class="badges"><span class="badge badge-red">~50 min</span><span class="badge badge-orange">Volume bras</span><span class="badge badge-gray">Haltères + Poulie</span></div>
+</div>
+<div class="warmup"><strong>🔥 Échauffement (6 min) :</strong> Rotations de poignets, quelques curls très légers × 15, extensions triceps légères × 15</div>
+<table class="ex-table">
+<thead><tr><th>Exercice</th><th>Muscles</th><th>Séries × Reps</th><th>Repos</th></tr></thead>
+<tbody>
+<tr><td><span class="ex-name">Curl barre droite ou EZ lourd 🏆</span><span class="ex-tip">Séance dédiée = aller plus lourd que mardi. 6–8 reps, charges maximales avec technique propre.</span></td><td><span class="muscle-tag m-biceps">Biceps</span></td><td class="sr">4 × 6–8</td><td class="rest-t">2 min</td></tr>
+<tr><td><span class="ex-name">Curl concentré haltère (assis)</span><span class="ex-tip">Coude contre l'intérieur de la cuisse — isolation totale du biceps, contraction maximale en haut.</span></td><td><span class="muscle-tag m-biceps">Biceps (pic)</span></td><td class="sr">3 × 12/bras</td><td class="rest-t">60 s</td></tr>
+<tr><td><span class="ex-name">Curl poulie basse (cables)</span><span class="ex-tip">Tension constante sur tout le mouvement — le câble est supérieur à l'haltère pour la tension en bas.</span></td><td><span class="muscle-tag m-biceps">Biceps</span></td><td class="sr">3 × 15</td><td class="rest-t">60 s</td></tr>
+<tr><td><span class="ex-name">Dips barre parallèles (triceps) 🏆</span><span class="ex-tip">Prise étroite + corps droit = triceps. Descendre jusqu'à l'angle droit des coudes.</span></td><td><span class="muscle-tag m-triceps">Triceps</span></td><td class="sr">4 × 10–12</td><td class="rest-t">90 s</td></tr>
+<tr><td><span class="ex-name">Extension triceps derrière la tête haltère</span><span class="ex-tip">1 haltère à deux mains au-dessus de la tête, descendre derrière la nuque — étirement complet du chef long.</span></td><td><span class="muscle-tag m-triceps">Triceps (chef long)</span></td><td class="sr">4 × 12</td><td class="rest-t">75 s</td></tr>
+<tr><td><span class="ex-name">Kickback + Superset skull crusher</span><span class="ex-tip">Kickback 12 reps + skull crusher (front press allongé) 10 reps sans repos entre les deux = finisher.</span></td><td><span class="muscle-tag m-triceps">Triceps</span></td><td class="sr">3 × superset</td><td class="rest-t">90 s</td></tr>
+</tbody>
+</table>
+<div class="cooldown"><strong>🧊 Cooldown (5 min) :</strong> Étirement biceps bras tendu contre mur, étirement triceps derrière la tête, massage avant-bras si tension</div>
+</div>
+</div>
+
+<!-- SAMEDI -->
+<div id="tab-samedi" class="tab-content">
+<div class="day-card">
+<div class="day-hdr">
+<div class="day-hdr-left"><div class="day-num">Samedi · Séance 5</div><div class="day-name">Full Upper — Séance lourde</div></div>
+<div class="badges"><span class="badge badge-red">~65 min</span><span class="badge badge-orange">Séance king</span><span class="badge badge-gray">Full équipement</span></div>
+</div>
+<div class="warmup"><strong>🔥 Échauffement (10 min) :</strong> 5 min cardio léger + activation épaules + face pulls × 15 + 2 séries DC léger + 2 séries tractions légères</div>
+<table class="ex-table">
+<thead><tr><th>Exercice</th><th>Muscles</th><th>Séries × Reps</th><th>Repos</th></tr></thead>
+<tbody>
+<tr><td><span class="ex-name">Développé couché barre (PR week) 🏆</span><span class="ex-tip">Tenter un nouveau record. 3 séries lourdes + 2 séries de volume. Semaine après semaine, noter les progrès.</span></td><td><span class="muscle-tag m-chest">Pectoraux</span></td><td class="sr">5 × 5</td><td class="rest-t">3 min</td></tr>
+<tr><td><span class="ex-name">Développé militaire haltères assis</span><span class="ex-tip">Version haltères pour travailler l'instabilité et la symétrie des deux épaules.</span></td><td><span class="muscle-tag m-shoulders">Épaules</span></td><td class="sr">4 × 8</td><td class="rest-t">2 min</td></tr>
+<tr><td><span class="ex-name">Tractions prise neutre ou supination</span><span class="ex-tip">Prise paumes vers soi = plus de biceps. Varier les prises chaque semaine pour un stimulus différent.</span></td><td><span class="muscle-tag m-back">Dos + Biceps</span></td><td class="sr">4 × max</td><td class="rest-t">2 min</td></tr>
+<tr><td><span class="ex-name">Rowing haltères (les deux bras simultanément)</span><span class="ex-tip">Buste à 90°, haltères dans chaque main, tirer simultanément — volume et symétrie.</span></td><td><span class="muscle-tag m-back">Dos</span></td><td class="sr">4 × 10</td><td class="rest-t">90 s</td></tr>
+<tr><td><span class="ex-name">Giant set finisher (sans repos) :</span><span class="ex-tip">Élévations latérales × 15 → Curl haltères × 12 → Extension triceps poulie × 15 → Gainage 30 sec — 3 tours</span></td><td><span class="muscle-tag m-core">Full upper</span></td><td class="sr">3 tours</td><td class="rest-t">2 min entre</td></tr>
+</tbody>
+</table>
+<div class="cooldown"><strong>🧊 Cooldown (8 min) :</strong> Étirements complets — pecs, dos, épaules, biceps, triceps. Foam roller dos si disponible. Hydratation ++</div>
+</div>
+</div>
+
+<!-- DIMANCHE REPOS -->
+<div id="tab-dimanche" class="tab-content">
+<div class="rest-card">
+<div class="ri">🌿</div>
+<h3>Dimanche — Repos total</h3>
+<p>Récupération complète. Ton corps a besoin de ces 48h pour synthétiser les protéines et reconstruire les fibres. Mange bien, dors 8h, et tu reviendras plus fort lundi.</p>
+</div>
+</div>
+</div>
+
+<div class="divider"></div>
+
+<div class="wrap">
+<div class="sec-head"><h2>Plan alimentation — Prise de masse</h2></div>
+
+<div class="important-box">
+<strong>Priorité absolue :</strong> Tu dois manger plus que tu ne brûles. À 63 kg + activité modérée, tu brûles ~2400 kcal/jour. Objectif : <strong>3000–3200 kcal/jour</strong>. Sans ça, aucun programme ne te fera prendre du muscle. La table d'alimentation prime sur la salle.
+</div>
+
+<div class="macro-row">
+<div class="macro-box"><div class="macro-box-label">Calories cible</div><div class="macro-box-val" style="color: var(--red)">3 000 <span style="font-size:1rem;color:var(--muted)">kcal</span></div><div class="macro-box-note">+600 kcal au-dessus de la maintenance. Augmenter à 3200 si pas de prise après 3 semaines.</div></div>
+<div class="macro-box"><div class="macro-box-label">Protéines</div><div class="macro-box-val" style="color: var(--orange)">140g</div><div class="macro-box-note">~2,2g par kg. Les protéines construisent le muscle — ne pas zapper.</div></div>
+<div class="macro-box"><div class="macro-box-label">Glucides</div><div class="macro-box-val" style="color: var(--yellow)">380g</div><div class="macro-box-note">Le carburant principal + recharge glycogène. Source : riz, pâtes, pain complet, flocons d'avoine.</div></div>
+<div class="macro-box"><div class="macro-box-label">Lipides</div><div class="macro-box-val" style="color: #6ec8f0">80g</div><div class="macro-box-note">Hormones (testostérone) + absorption vitamines. Avocat, noix, huile d'olive.</div></div>
+</div>
+
+<div class="meals">
+<div class="meal"><div class="meal-t">7h · Réveil</div><div class="meal-body"><strong>Petit déjeuner — Calorique & riche en glucides</strong><span>100g flocons d'avoine + lait entier · 3 œufs brouillés · 2 tranches pain complet + beurre de cacahuète · 1 banane<br>→ <strong style="color:var(--red)">~750 kcal · 40g protéines</strong></span></div></div>
+<div class="meal"><div class="meal-t">10h · Collation</div><div class="meal-body"><strong>Snack pré-séance ou matinale</strong><span>Shake whey (30g) + 300ml lait entier · 30g noix · 1 pomme<br>→ <strong style="color:var(--red)">~450 kcal · 35g protéines</strong></span></div></div>
+<div class="meal"><div class="meal-t">13h · Déjeuner</div><div class="meal-body"><strong>Repas principal — Volume & glucides lents</strong><span>200g riz basmati cuit · 200g poulet ou bœuf haché 5% · légumes · 1 cuil. huile d'olive · fromage râpé<br>→ <strong style="color:var(--red)">~750 kcal · 45g protéines</strong></span></div></div>
+<div class="meal"><div class="meal-t">Post-séance</div><div class="meal-body"><strong>Fenêtre anabolique — Max 30 min après l'effort</strong><span>Shake whey + banane + 40g flocons d'avoine dans le shaker.<br>→ <strong style="color:var(--red)">~350 kcal · 30g protéines</strong></span></div></div>
+<div class="meal"><div class="meal-t">19h · Dîner</div><div class="meal-body"><strong>Dîner — Protéines & lipides</strong><span>200g saumon ou steak · 150g pâtes complètes · légumes rôtis au four · ½ avocat · 2 carrés chocolat 70%<br>→ <strong style="color:var(--red)">~700 kcal · 40g protéines</strong></span></div></div>
+</div>
+</div>
+
+<div class="divider"></div>
+
+<div class="wrap">
+<div class="sec-head"><h2>Règles ectomorphe</h2></div>
+<div class="keys-grid">
+<div class="key-card"><div class="key-icon">📈</div><div><strong>Surcharge progressive</strong><p>Ajouter du poids ou des reps chaque semaine, même +1kg. Sans ça, le corps ne s'adapte plus. Noter les perfs dans un carnet.</p></div></div>
+<div class="key-card"><div class="key-icon">🍽️</div><div><strong>Manger est prioritaire</strong><p>Ectomorphe = brûleur de calories. Si tu prends pas de poids après 2 semaines, augmente les glucides de 50g/jour. Pas le choix.</p></div></div>
+<div class="key-card"><div class="key-icon">🚫</div><div><strong>Limiter le cardio</strong><p>Le cardio brûle des calories qu'on a besoin pour le muscle. Max 1 session légère/semaine (20-30 min).</p></div></div>
+<div class="key-card"><div class="key-icon">💤</div><div><strong>Sommeil = GH</strong><p>L'hormone de croissance est sécrétée la nuit. 8h minimum. S'entraîner dur et dormir 6h = résultats divisés par 2.</p></div></div>
+<div class="key-card"><div class="key-icon">🥛</div><div><strong>Compléments utiles</strong><p>Whey protéine (post-séance obligatoire). Créatine monohydrate (5g/jour) : le seul supplément prouvé pour la force et la masse.</p></div></div>
+<div class="key-card"><div class="key-icon">📅</div><div><strong>Mesurer sur 3 mois</strong><p>Peser chaque semaine le matin à jeun. Objectif : +300-500g par semaine. Mesures des bras et pectoraux toutes les 3 semaines.</p></div></div>
+</div>
+</div>
+
+<div class="footer">
+Programme haut du corps · Homme · 63 kg · 1m80 · Prise de masse · Matériel haltères + barre + poulie
+</div>
+
+<script>
+var btns = document.querySelectorAll('.tab-btn');
+btns.forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    var day = this.getAttribute('data-day');
+    document.querySelectorAll('.tab-content').forEach(function(el) { el.classList.remove('active'); });
+    document.querySelectorAll('.tab-btn').forEach(function(el) { el.classList.remove('active'); });
+    document.getElementById('tab-' + day).classList.add('active');
+    this.classList.add('active');
+    this.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  });
+});
+</script>
+</body>
+</html>
